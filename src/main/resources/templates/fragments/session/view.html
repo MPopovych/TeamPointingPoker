@@ -1,0 +1,40 @@
+<div th:fragment="viewSession">
+    <div id="toast-container" class="fixed top-15 right-5 z-50 space-y-2"></div>
+
+    <div class="px-4 max-w-screen-lg mx-auto">
+        <!-- Session Info -->
+        <section id="session-header" class="mb-4 space-y-2">
+            <input id="session-title"
+                   class="w-full text-xl font-semibold bg-transparent text-white border-none focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded"
+                   placeholder="Session Title" />
+
+            <textarea id="session-description"
+                      class="w-full text-sm bg-transparent text-gray-300 border-none resize-none focus:outline-none focus:ring-2 focus:ring-indigo-600 rounded"
+                      rows="2"
+                      placeholder="Session Description"></textarea>
+        </section>
+
+        <!-- Active Users -->
+        <div id="active-users-list" class="flex flex-wrap gap-2 mb-4"></div>
+
+        <!-- Poker Rounds -->
+        <section id="rounds-wrapper" class="overflow-x-auto whitespace-nowrap w-full py-4">
+            <div id="rounds" class="flex gap-4 px-1 sm:px-4">
+                <!-- Slides rendered here -->
+            </div>
+        </section>
+
+        <!-- Create New Round -->
+        <div class="flex justify-end mt-4">
+            <button onclick="createNewRound()"
+                    class="bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-full shadow-lg transition-all">
+                + New Round
+            </button>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        const sessionData = /*[[${data}]]*/ null;
+    </script>
+    <script src="/viewScript.js"></script>
+</div>

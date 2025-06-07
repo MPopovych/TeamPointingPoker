@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="fragments/head :: header"></head>
+<body class="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white min-h-screen">
+
+<!-- Navigation (optional) -->
+<header class="bg-gray-900/80 backdrop-blur border-b border-gray-700 shadow sticky top-0 z-50">
+  <div class="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+    <h1 class="text-xl font-bold text-white">🌌 Poker voting</h1>
+    <nav class="space-x-4">
+      <span th:if="${user != null}" th:text="${'Hi, ' + user?.name}" class="text-gray-300 hover:text-white"></span>
+      <a th:if="${user == null}" href="/login" class="text-gray-300 hover:text-white">Login</a>
+      <a href="/" class="text-gray-300 hover:text-white">Home</a>
+      <a href="/session/new" class="text-gray-300 hover:text-white">New session</a>
+      <a th:if="${user != null}" href="/session" class="text-gray-300 hover:text-white">My sessions</a>
+    </nav>
+  </div>
+</header>
+
+<!-- Main Content -->
+<main class="max-w-7xl mx-auto px-6 py-10">
+  <div th:replace="${content}"></div>
+</main>
+
+<!-- Footer -->
+<footer class="text-center text-sm text-gray-500 py-6">
+  &copy; 2025 M · All rights reserved
+</footer>
+
+</body>
+</html>

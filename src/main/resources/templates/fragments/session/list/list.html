@@ -1,0 +1,40 @@
+<div class="container mx-auto px-4 py-6">
+  <h1 class="text-2xl font-semibold text-white mb-4">Poker Sessions</h1>
+
+  <div class="overflow-x-auto bg-gray-800 rounded-lg shadow">
+    <table class="min-w-full table-auto text-left text-sm text-gray-300">
+      <thead class="bg-gray-700 text-xs uppercase tracking-wider text-gray-400">
+      <tr>
+        <th class="px-4 py-3">Title</th>
+        <th class="px-4 py-3">Description</th>
+        <th class="px-4 py-3">Members</th>
+        <th class="px-4 py-3">Created</th>
+      </tr>
+      </thead>
+      <tbody>
+      <!--/*@thymesVar id="data" type="java.util.List<com.makki.poker.web.dto.PokerSessionShortDto>"*/-->
+      <tr th:each="entry : ${data}"
+          th:attr="data-id=${entry.id}"
+          class="session-row cursor-pointer hover:bg-gray-700 transition-colors">
+        <td class="px-4 py-3 font-medium text-white" th:text="${entry.title ?: 'Untitled'}"></td>
+        <td class="px-4 py-3 text-gray-400 truncate max-w-xs" th:text="${entry.description ?: '-'}"></td>
+        <td class="px-4 py-3 text-center" th:text="${entry.memberCount}"></td>
+        <td class="px-4 py-3 text-gray-500"
+            th:text="${#dates.format(entry.created, 'yyyy-MM-dd HH:mm')}"></td>
+      </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".session-row").forEach(row => {
+      row.addEventListener("click", () => {
+        const id = row.getAttribute("data-id");
+        if (id) {
+          window.location.href = `/session/${id}`;
+        }
+      });
+    });
+  });
+</script>

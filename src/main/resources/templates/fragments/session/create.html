@@ -1,0 +1,220 @@
+<!-- fragments/form.html -->
+<div th:fragment="createSessionForm">
+    <div id="toast-container" class="fixed top-15 right-5 z-50 space-y-2"></div>
+    <form id="session-form" method="post" th:action="@{/session/new}" class="space-y-6" onsubmit="submitForm(event)">
+
+        <!-- Title -->
+        <div>
+            <label for="title" class="block text-sm font-medium text-gray-300">Title</label>
+            <input id="title" name="title" type="text" maxlength="45" th:value="${sessionTitle}"
+                   class="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-300">Description</label>
+            <textarea id="description" name="description" rows="2" maxlength="500"
+                      class="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+        </div>
+
+        <!-- Session Password -->
+        <div>
+            <label for="password" class="block text-sm font-medium text-gray-300">Session password</label>
+            <input id="password" name="config.joinPassword" type="text" maxlength="16"
+                   class="mt-1 block w-full bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+        </div>
+
+        <!-- Poker Points Options -->
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Points</label>
+
+            <!-- Options Grid -->
+            <div id="options-container" class="columns-1 sm:columns-2 gap-4 space-y-2">
+                <!-- JS will populate this -->
+            </div>
+
+            <!-- Controls -->
+            <div class="flex flex-wrap gap-2 mt-4">
+                <button type="button" onclick="addVoteOption()" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-xl">
+                    + Add Option
+                </button>
+                <button type="button" onclick="clearVoteOptions()" class="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl">
+                    🗑 Clear All
+                </button>
+                <button type="button" onclick="setDefaultVoteOptions()" class="text-sm bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-xl">
+                    🔄 Reset to Default
+                </button>
+            </div>
+        </div>
+
+        <!-- Team Options -->
+        <div>
+            <label class="block text-sm font-medium text-gray-300 mb-2">Teams</label>
+
+            <!-- Options Grid -->
+            <div id="teams-container" class="columns-1 sm:columns-2 gap-4 space-y-2">
+                <!-- JS will populate this -->
+            </div>
+
+            <!-- Controls -->
+            <div class="flex flex-wrap gap-2 mt-4">
+                <button type="button" onclick="addTeamOption()" class="text-sm bg-indigo-600 hover:bg-indigo-700 text-white px-3 py-1 rounded-xl">
+                    + Add Team
+                </button>
+                <button type="button" onclick="clearTeamOptions()" class="text-sm bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded-xl">
+                    🗑 Clear All
+                </button>
+                <button type="button" onclick="setDefaultTeamOptions()" class="text-sm bg-gray-600 hover:bg-gray-700 text-white px-3 py-1 rounded-xl">
+                    🔄 Reset to Default
+                </button>
+            </div>
+        </div>
+
+        <!-- Submit -->
+        <div>
+            <button type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-2 px-4 rounded-xl">Create</button>
+        </div>
+    </form>
+
+    <!-- Option Template -->
+    <template id="option-template">
+        <div class="flex items-center space-x-2">
+            <input type="number" step="any" name="config.points[].value" placeholder="N/A"
+                   class="w-24 bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <input type="text" name="config.points[].label" required placeholder="Label"
+                   class="flex-grow bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
+                🗑
+            </button>
+        </div>
+    </template>
+
+    <!-- Team Template -->
+    <template id="team-template">
+        <div class="flex items-center space-x-2">
+            <input type="text" name="config.teams[]" required placeholder="Team name"
+                   class="flex-grow bg-gray-800 border border-gray-700 rounded-xl p-2 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+            <button type="button" onclick="this.parentElement.remove()" class="text-red-500 hover:text-red-700">
+                🗑
+            </button>
+        </div>
+    </template>
+
+    <script>
+        const DEFAULT_VOTE_OPTIONS = [
+            { value: null, label: "?" },
+            { value: 0, label: "0p" },
+            { value: 0.5, label: "0.5p" },
+            { value: 1, label: "1p" },
+            { value: 2, label: "2p" },
+            { value: 3, label: "3p" },
+            { value: 5, label: "5p" },
+            { value: 8, label: "8p" },
+            { value: 13, label: "13p" },
+            { value: 21, label: "21p" }
+        ];
+        const DEFAULT_TEAM_OPTIONS = [
+            "BE",
+            "FE",
+            "QA"
+        ]
+
+        function setDefaultVoteOptions() {
+            const container = document.getElementById('options-container');
+            container.innerHTML = ''; // Clear existing children
+            DEFAULT_VOTE_OPTIONS.forEach(option => addVoteOption(option));
+        }
+
+        function setDefaultTeamOptions() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = ''; // Clear existing children
+            DEFAULT_TEAM_OPTIONS.forEach(option => addTeamOption(option));
+        }
+
+        function addVoteOption(option = { value: '', label: '' }) {
+            const container = document.getElementById('options-container');
+            const template = document.getElementById('option-template');
+            const clone = template.content.cloneNode(true);
+            const index = container.children.length;
+
+            // Update input names using index
+            const inputs = clone.querySelectorAll('input');
+            inputs[0].name = `config.points[${index}].value`;
+            inputs[0].value = option.value ?? '';
+            inputs[1].name = `config.points[${index}].label`;
+            inputs[1].value = option.label;
+
+            container.appendChild(clone);
+        }
+
+        function addTeamOption(option = '') {
+            const container = document.getElementById('teams-container');
+            const template = document.getElementById('team-template');
+            const clone = template.content.cloneNode(true);
+            const index = container.children.length;
+
+            // Update input names using index
+            const inputs = clone.querySelectorAll('input');
+            inputs[0].name = `config.teams[${index}]`;
+            inputs[0].value = option ?? '';
+
+            container.appendChild(clone);
+        }
+
+        function clearVoteOptions() {
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+
+            addVoteOption()
+        }
+
+        function clearTeamOptions() {
+            const container = document.getElementById('teams-container');
+            container.innerHTML = '';
+
+            addTeamOption()
+        }
+
+        // Add an initial option
+        document.addEventListener('DOMContentLoaded', () => {
+            setDefaultVoteOptions()
+            setDefaultTeamOptions()
+        });
+
+        async function submitForm(event) {
+            event.preventDefault(); // Prevent regular form submission
+
+            const form = document.getElementById('session-form');
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text(); // you can customize this
+                    showToast("Error: " + errorText, "error");
+                }
+
+                if (response.redirected) {
+                    window.location.href = response.url;
+                }
+            } catch (err) {
+                showToast("Unexpected error: " + err.message, "error");
+            }
+        }
+
+        function showToast(message, type = "info") {
+            const toast = document.createElement("div");
+            toast.className = `px-4 py-2 rounded-xl shadow-md text-white ${type === "error" ? "bg-red-600" : "bg-green-600"}`;
+            toast.textContent = message;
+
+            const container = document.getElementById("toast-container");
+            container.appendChild(toast);
+
+            setTimeout(() => toast.remove(), 3000);
+        }
+    </script>
+</div>
