@@ -1,1 +1,10 @@
+version: '3.8'
 services:
+  spring-poker:
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: spring-container
+    ports:
+      - "8082:8080"
