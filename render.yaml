@@ -6,3 +6,8 @@ services:
     runtime: docker
     name: poker
     repo: https://github.com/MPopovych/TeamPointingPoker.git
+    scaling:
+      minInstances: 0
+      maxInstances: 1
+      targetMemoryPercent: 60
+      targetCPUPercent: 60
